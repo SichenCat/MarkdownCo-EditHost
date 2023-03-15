@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ArrLtExTENDs/ArrLtExTENDs.iml" filepath="$PROJECT_DIR$/ArrLtExTENDs/ArrLtExTENDs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DOUDIZHU/DOUDIZHU.iml" filepath="$PROJECT_DIR$/DOUDIZHU/DOUDIZHU.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FileClassDemo/FileClassDemo.iml" filepath="$PROJECT_DIR$/FileClassDemo/FileClassDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LogBackDemo/LogBackDemo.iml" filepath="$PROJECT_DIR$/LogBackDemo/LogBackDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OOP/OOP.iml" filepath="$PROJECT_DIR$/OOP/OOP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/StreamCase/StreamCase.iml" filepath="$PROJECT_DIR$/StreamCase/StreamCase.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Time/Time.iml" filepath="$PROJECT_DIR$/Time/Time.iml" />
+      <module fileurl="file://$PROJECT_DIR$/UltiHM.iml" filepath="$PROJECT_DIR$/UltiHM.iml" />
+    </modules>
+  </component>
+</project>

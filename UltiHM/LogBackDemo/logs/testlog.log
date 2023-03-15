@@ -1,0 +1,5 @@
+2023-03-10 19:52:34.963 [main] DEBUG demo1.class - main starts.
+2023-03-10 19:52:34.965 [main] INFO  demo1.class - line1: go divide
+2023-03-10 19:52:34.969 [main] TRACE demo1.class - a=10
+2023-03-10 19:52:34.970 [main] TRACE demo1.class - b=0
+2023-03-10 19:52:34.971 [main] ERROR demo1.class - error occurs:java.lang.ArithmeticException: / by zero
