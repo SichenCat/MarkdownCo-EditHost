@@ -7,7 +7,7 @@
   git commit -m "description forexample : first commit"
   git push -u origin master
   ```
-  or you can just [ git push ]
+  
   
 
 ## 同步仓库到本地
