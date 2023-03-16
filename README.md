@@ -14,11 +14,11 @@
   添加文件到暂存区：`git add [file1] [file2]  ... `
   添加目录(及其所有子目录)：` git add [dir] `
   添加所有文件：` git add . `
-  修改文件后必须使用add命令！
+  添加文件后必须使用add命令！
   
   #### git commit:
   将暂存区内容添加到本地仓库: ` git commit [file1] [file2] ... -m [message] `
-  设置修改文件后无需git add 直接提交: ` git commit -a `
+  设置'修改'文件(不是添加！)后无需git add 直接提交: ` git commit -am [message]` 
   
   #### git push:
   
