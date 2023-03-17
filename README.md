@@ -8,6 +8,7 @@
   git add .
   git commit -m "description forexample : first commit"
   git push -u origin master
+      
   ```
   
   #### git add：
@@ -20,7 +21,7 @@
   添加文件后必须使用add命令！
   
   #### git commit:
-  将暂存区内容添加到本地仓库: ` git commit [file1] [file2] ... -m [message] `
+  将暂存区内容添加到本地仓库: ` git commit [file1] [file2] ... -m [message] ` 
   
   设置'修改'文件(不是添加！)后无需git add 直接提交: ` git commit -am [message]` 
   
@@ -30,7 +31,7 @@
   
   快捷提交，首次使用时添加 -u 来设置默认值：` git push -u origin master` 
   
-  使用-u设置后，可以直接提交/拉取：` git push `    |    ` git pull `
+  使用-u设置后，可以直接提交/拉取：` git push `     ` git pull `
   
   
   
@@ -60,4 +61,6 @@ git clone [git@github.com:SichenCat/MarkdownCo-EditHost] [File_Name_YouWant]
   git pull
   ```
 
-  
+## MD编辑器问题
+
+将Drake文件夹和相关主题CSS文件放到主题下即可，另外安装JB Mono字体，笔记本用字号选择15  
