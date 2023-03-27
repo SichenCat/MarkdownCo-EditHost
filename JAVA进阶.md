@@ -250,7 +250,7 @@ void schedule(TimerTask task, long delay , long period )  // delay表示时延�
 ``` java
 public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit)
     
-    pool.scheduleAtFixedRate( () -> { System.out.pritnln( " Thread.currentThread().getName()" + "输出123" ) } );
+pool.scheduleAtFixedRate( () -> { System.out.pritnln( " Thread.currentThread().getName()" + "输出123" ) } );
 ```
 
 ​	线程的生命周期：Java中，线程有六个状态(枚举定义)
@@ -261,5 +261,92 @@ public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDela
 
 ### 2 网络编程
 
-#### 2.1
+#### 2.1 网络通信三要素
 
+	##### 2.1.1 IP地址
+
+​	常用命令：
+
+``` bash
+ipconfig  //查看本机IP
+ping IP   //检查网络连通情况
+```
+
+​	IP地址操作工具类： class InetAddress
+
+​	
+
+| 名称                                             | 说明                              |
+| ------------------------------------------------ | --------------------------------- |
+| public static InetAddress getLocalHost()         | 返回本主机的地址对象              |
+| public static InetAddress getByName(String host) | 通过域名/IP，得到对应的IP地址对象 |
+| public static getHostName()                      | 得到IP地址的主机名                |
+| public static getHostAddress()                   | 返回主机的IP地址                  |
+| public boolean isReachable(int timeout)          | 尝试连通IP地址对应的主机          |
+
+##### 2.1.2 端口
+
+唯一标识计算机上运行的程序
+
+端口号范围：0~65535 （16bit）
+
+端口类型:
+
+​	周知端口：0~1023，被预占用（比如HTTP占用80，FTP占用21）
+
+​	注册端口：1024~49151,分配给用户进程（比如TomCat占用8080，My'SQL占用3306）
+
+​	动态端口：49152~65535，一般不固定分配给某种进程，二是动态分配的
+
+##### 2.1.3 网络通讯协议 TCP/IP标准
+
+###### **UDP协议：**
+
+​	UDP: User Datagram Protocol
+
+​	数据包对象：DatagramPacket    
+
+​	构造器和方法：
+
+| public DatagramPacket(byte[] buf,int length,InetAddress address,int port) | 创建发送端的数据包对象         |
+| ------------------------------------------------------------ | ------------------------------ |
+| public DatagramPacket(byte[] buf,int length)                 | 创建接收端的数据包对象         |
+| public int getLength()                                       | 获得实际接收的字节的数目       |
+| public SocketAddress getSocketAddress()                      | 获得数据包的IP信息(包括端口号) |
+| public int getPort()                                         | 获得端口                       |
+
+​	通信管道对象：DatagramSocket
+
+​	构造器和方法：
+
+| public DatagramSocket()               | 创建一个通信管道对象 —— 发送端，系统会分配一个端口(也可指定) |
+| ------------------------------------- | ------------------------------------------------------------ |
+| public DatagramSocket(int port)       | 创建一个  接收端，需要指定端口号                             |
+| public void send(DatagramPacket p)    | 发送数据                                                     |
+| public void receive(DatagramPacket p) | 接收数据                                                     |
+
+​	UDP多发多收：while嵌套
+
+​	UDP广播/组播: 与当前所在网络的 所有主机/选定的一组主机 通信
+
+​		发送端使用广播时，必须使用广播地址255.255.255.255，且指定端口9999
+
+​		接收端只要在同一网络并将端口设置为9999即可。
+
+​		发送端使用组播时，必须使用地址 224.0.0.0 ~ 239.255.255.255，且端口为9999
+
+​		接收端必须使用joinGroup方法绑定同一组播IP对象，并将端口设置为9999即可。
+
+​			DatagramSocket的子类 MulticastSocket 可以帮助绑定组播IP。
+
+``` java
+//接收端进行组播接收
+	MulticastSocket socket = new MulticastSocket(9999);
+	socket.joinGroup(InetAddress.getByName("组播IP地址"));  //jdk14已经淘汰
+	socket.joinGroup(new InetSocketAddress(InetAddress.getByName("组播IP地址") , 9999 ) ， 
+			NetworkInterface.getByInetAddress(InetAddress.getLocalHost()) ) ; //新方法
+```
+
+###### **TCP协议：**
+
+​	
