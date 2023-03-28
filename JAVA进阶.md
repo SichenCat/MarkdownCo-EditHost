@@ -294,9 +294,9 @@ ping IP   //检查网络连通情况
 
 ​	周知端口：0~1023，被预占用（比如HTTP占用80，FTP占用21）
 
-​	注册端口：1024~49151,分配给用户进程（比如TomCat占用8080，My'SQL占用3306）
+​	注册端口：1024~49151,分配给用户进程（比如TomCat占用8080，MySQL占用3306）
 
-​	动态端口：49152~65535，一般不固定分配给某种进程，二是动态分配的
+​	动态端口：49152~65535，一般不固定分配给某种进程，并且是动态分配的
 
 ##### 2.1.3 网络通讯协议 TCP/IP标准
 
@@ -348,5 +348,92 @@ ping IP   //检查网络连通情况
 ```
 
 ###### **TCP协议：**
+
+​	客户端：使用Socket类(接收数据的类似下方服务端所写)
+
+​		1.创建Socket对象
+
+​		2.通过Socket创建一个字节输出流，用于发送数据 ` OutputStream os = socket.getOutputStream();`
+
+​		3.将低级的字节流包装成打印流 ` PrintStream ps = new PrintStream(os);`
+
+​		4.发送消息，进行通信` ps.print();`   发送后记得  ` ps.flush();`
+
+​		Socket类构造器：Socket(String host,int port)    根据服务器IP地址(若在本地，为127.0.0.1)，服务器端口号创建Socket对象
+
+​	服务端：使用ServerSocket类 (发送数据的类似上方客户端所写)
+
+​		1.注册端口  构造器：ServerSocket(int port)   根据服务端端口创建对象 
+
+​		2.等待接收客户端的Socket连接  方法：public Socket accept(); ` Socket socket = serverSocket.accept();`
+
+​		3.接收成功，得到Socket对象，通过这个对象创建 字节输入流 ` InputStream is = socket.getInputStream();`  
+
+​		4.先将字节流转换成字符流，再将低级的字符流包装成 缓冲字符输入流 (因为缓冲流不能包装字节流，必须先转换成字符流)
+
+​		 ` BufferedReader br = new BufferedReader(new InputStreamReader(is) );`
+
+​		5.接收消息
+
+​	多发多收：while嵌套,注意服务端不但要在接收处while嵌套，accept()也需要嵌套进行轮询连接。
+
+​	***同时处理多客户端消息：多线程**
+
+​		UDP没有建立连接，不会持续占用线程。而TCP在长连接中当前线程会持续占用。
+
+​		改进服务端，实现多线程:
+
+​			当 accpet() 接收到连接对象，创建一个子线程来处理。
+
+``` java
+public class ServerReaderThread extends Thread(){
+    private Socket socket;
+    public ServerReaderThread (Socket socket){
+        this.socket = socket;
+    }
+    @override  //在run方法中执行服务端的3-5步（创建IO流，接收消息）
+    public run(){
+        InputStream is = socket.getInputStream();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is) );
+        String msg;
+        while( (msg = br.readLine()) != null ){
+            System.out.printlb(msg);
+        }
+    }
+}
+```
+
+​	**\*通过线程池进一步优化：**
+
+​		思想：将新的tcp连接设置成Runnable任务，放入线程池任务队列，让线程池按设定自行执行；
+
+``` java
+// 创建一个静态的线程池对象
+private static ExecutorService pool = new ThreadPoolExecutor(3, 5, 6, TimeUnit.SECONDS, new ArrayBlockingQueue<>(2), 
+Executors.defaultThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
+
+//创建任务类，用于socket通信
+public class ServerReaderRunnable implements Runnable{
+    private Socket socket;  
+    public ServerReaderRunnable(Socket socket){  //定义构造器
+        this.socket = socket;
+    }
+    @override
+    public void run(){
+        // is,br,msg,sout;
+    }
+}
+
+//accept() 执行成功后，获得了socket对象，以此建立对立任务交给线程池运行；
+	···
+	Socket socket = serverSocket.accept();
+	Runnable target  = new ServerReaderRunnable(socket);
+    pool.execute(target);  //交付给线程池
+	···
+```
+
+​	即时通信（服务端作为中转，接收和推送消息）
+
+​	客户端需要再占用一个线程来读取读消息；服务端需要用一个集合将所有的socket对象储存。
 
 ​	
