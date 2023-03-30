@@ -14,7 +14,7 @@ public class InetAddressDemo {
         InetAddress ip2 = InetAddress.getByName("www.baidu.com");
         System.out.println(ip2.getHostName());
         System.out.println(ip2.getHostAddress());
-        
         System.out.println("是否连通？:" + ip2.isReachable(1000));
+
     }
 }

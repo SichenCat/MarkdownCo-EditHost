@@ -6,8 +6,10 @@
       <module fileurl="file://$PROJECT_DIR$/DOUDIZHU/DOUDIZHU.iml" filepath="$PROJECT_DIR$/DOUDIZHU/DOUDIZHU.iml" />
       <module fileurl="file://$PROJECT_DIR$/FileClassDemo/FileClassDemo.iml" filepath="$PROJECT_DIR$/FileClassDemo/FileClassDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/IP/IP.iml" filepath="$PROJECT_DIR$/IP/IP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JunitDemo/JunitDemo.iml" filepath="$PROJECT_DIR$/JunitDemo/JunitDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/LogBackDemo/LogBackDemo.iml" filepath="$PROJECT_DIR$/LogBackDemo/LogBackDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/OOP/OOP.iml" filepath="$PROJECT_DIR$/OOP/OOP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Reflection/Reflection.iml" filepath="$PROJECT_DIR$/Reflection/Reflection.iml" />
       <module fileurl="file://$PROJECT_DIR$/StreamCase/StreamCase.iml" filepath="$PROJECT_DIR$/StreamCase/StreamCase.iml" />
       <module fileurl="file://$PROJECT_DIR$/Thread/Thread.iml" filepath="$PROJECT_DIR$/Thread/Thread.iml" />
       <module fileurl="file://$PROJECT_DIR$/Time/Time.iml" filepath="$PROJECT_DIR$/Time/Time.iml" />

@@ -436,4 +436,106 @@ public class ServerReaderRunnable implements Runnable{
 
 ​	客户端需要再占用一个线程来读取读消息；服务端需要用一个集合将所有的socket对象储存。
 
-​	
+### 补：Junit单元测试
+
+​	针对方法的正确性进行的测试
+
+​	首先要导入Junit的jar包(IDEA自带)
+
+​	测试方法需要用注解@test，必须是public void 无参数方法
+
+``` java
+@Test
+public void testMethod(){
+    ·····
+    TestClass t1 = new TestClass;
+    String rs = t1.Method();
+    Assert.assertEquals("不符合的消息提示内容" , "expected String" , rs);
+}
+```
+
+​	Junit常用注解：
+
+| @Test        | 测试方法                                              |
+| ------------ | ----------------------------------------------------- |
+| @Before      | 该方法在每个‘测试方法’执行 之前 执行一次              |
+| @After       | 该方法在每个‘测试方法’执行 之后 执行一次              |
+| @BeforeClass | 修饰静态方法   在所有方法执行 之前 ，执行且仅执行一次 |
+| @AfterClass  | 修饰静态方法   在所有方法执行 之后 ，执行且仅执行一次 |
+
+
+
+### 3 反射*
+
+​	对于任意一个Class类，在’运行时‘可以得到这个类的全部成分：构造器对象Constructor，成员变量对象Field，成员方法对象Method.
+
+​	反射的第一步是得到编译后的Class类对象,然后就可以解析类中的全部成分。` Class c = HelloWorld.class;`
+
+​		可以用Class的一个方法forName(全限制名：包名+类名)来获取Class对象` Class c = Class.forName("com.xxxx.xxxx.Student");`
+
+​		或者直接使用类名.class  ` Class c = Student.class; `
+
+​		或者在运行时阶段获得实例的类对象 ` Class c = Student.getClass();`
+
+​		**注意! 三种方式得到的都是同一个类对象，不是各自不同的新的类对象！ 类的对象是通过new创建的，每次都是不同的对象**
+
+​	获取类对象之后，就可以获取 三种对象(Constructor,Field,Method)
+
+#### 3.1 获得构造器对象
+
+​	获得构造器对象Constructor：
+
+| Constructor<?>[] getConstructors()                           | 返回所有构造器对象的数组（只能拿public类型的构造器） |
+| ------------------------------------------------------------ | ---------------------------------------------------- |
+| Constructor<?>[] getDeclaredConstructors()                   | 返回所有构造器对象的数组，包括private的              |
+| Constructor<T> getConstructor(Class<?>... parameterTypes)    | 返回单个构造器对象（只能拿public的）                 |
+| Constructor<T> getDeclaredConstructor(Class<?>... parameterTypes) | 返回单个构造器对象，无论构造器的修饰符如何           |
+
+​	方法3、4用法示意： ` Constructor cons = c.getConstructor(Sring.class , int.class);//不写就是无参构造器 ` (类类型的可变参数)	
+
+​	Constructor类用于创建对象的方法：
+
+| T newInstance(Object... initargs)       | 根据指定构造器创建对象（输入构造器参数）                     |
+| --------------------------------------- | ------------------------------------------------------------ |
+| public void setAccessible(boolean flag) | 参数设置为true，取消访问检查(无视private等限制)，进行暴力反射 |
+
+​	` cons.setAccessible(True);        Student s = (student) cons.newInstance();`  //默认返回Object，需要强转
+
+#### 3.2 获得成员变量对象
+
+​	由static和final修饰的变量也可以获取。
+
+| Field[] getDeclaredFields()         | 返回所有成员变量对象的数组，存在就能拿到 |
+| ----------------------------------- | ---------------------------------------- |
+| Field getDeclaredField(String name) | 返回单个成员变量对象，存在就能拿到       |
+
+​	对成员变量进行赋值：
+
+| void set(Object obj, Object value) | 为对象注入某个成员变量数据 |
+| ---------------------------------- | -------------------------- |
+
+​	首先要有一个对象才能进行赋值！  以3.1获得的Student实例 s 继续：
+
+``` java
+···
+    cons.setAccessible(True); //暴力反射
+	Student s = (student) cons.newInstance();  //默认返回Object，需要强转
+	Field ageF = c.getDeclaredField("age");
+	ageF.setAccessible(True); //暴力反射
+	ageF.set(s , 18 ); // 实例 s 成员变量 age 被设置为 18
+	// 同样也可以用这种方式取值
+	int age = (int) ageF.get(s);  // 方法的返回类型为Object 所以需要强转
+···
+```
+
+
+
+### 4 注解  @
+
+
+
+### 5 动态代理(设计模式之一)
+
+
+
+### 6 XML
