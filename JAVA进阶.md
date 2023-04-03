@@ -14,7 +14,7 @@
 
 **多线程：**从软硬件上实现多条执行流程的技术
 
-#### 1.1多线程的实现及其方法
+#### 1.1 多线程的实现及其方法
 
  1. **继承Thread类,自定义线程**
 
@@ -90,7 +90,7 @@
    | Thread.sleep(long time) | 当前线程休眠指定毫秒后再继续执行                             |
    | run(),start()           | 线程要做的事和线程启动方法                                   |
 
-#### 1.2线程安全问题和线程同步
+#### 1.2 线程安全问题和线程同步
 
 ​	同时调用且修改同一资源时可能出现不合事务逻辑的问题。
 
@@ -528,14 +528,270 @@ public void testMethod(){
 ···
 ```
 
+#### 3.3 获得成员方法对象
 
+​	方法也是类似的(同样可以获取静态方法)：
+
+| Method[] getDeclaredMethods()                                | 返回所有成员方法对象的数组，存在就能拿到 |
+| ------------------------------------------------------------ | ---------------------------------------- |
+| Method getDeclaredMethod(String name, Class<?>... parameterTypes) | 返回单个成员方法对象，存在就能拿到       |
+
+​	` Method m1 = c.getDeclaredMethod("buy", String.class , int.class);`
+
+​	触发执行成员方法：
+
+| Object invoke(Object obj, Object... args) | obj为执行此方法的对象，后续参数为方法的形参，Object为返回值(void方法返回null) |
+| ----------------------------------------- | ------------------------------------------------------------ |
+
+``` java
+··· 
+    Student s = (student) cons.newInstance();
+	Method m1 = c.getDeclaredMethod("buy");  //m1为void 无参方法
+	Method m2 = c.getDeclaredMethod("buy", String.class , int.class); // m2为返回 boolean，两个参数的方法
+	m1.setAccessible(ture);//暴力反射
+	Object result1 = m1.invoke(s); // 通过实例s来执行方法s，rusult1值为null
+	Object result2 = m2.invoke(s,"Food",2);// 返回值为true
+···
+```
+
+#### 3.4 反射的作用
+
+​	绕过编译阶段：
+
+``` java
+	ArrayList<Integer> list = new ArrayList<>();
+	Class c = list.getClass();
+	Method add = c.getDeclaredMethod("add",Object.class);
+	boolean rs = (boolean) add.invoke(list，"String") // 向约束了Integer的ArrayList注入了String类型的参数	
+	/* 注意：泛型仅仅在编译阶段有效，成为字节码文件后，泛型会被擦除 */
+```
+
+​	做通用框架的底层原理：（目前仅了解）
 
 ### 4 注解  @
 
+​	注解 Annotation ,可以对类、方法、成员变量、构造器、参数等进行标注，然后进行”特殊处理“。
 
+​	例如在 Junit框架中，只有标注了 **@test** 的方法会被当做测试方法执行，没有标记的则不会执行；
+
+#### 4.1 自定义注解
+
+``` java
+public @interface 注解名称{
+    public 属性类型 属性名() default 默认值; 
+} 
+
+public @interface MyAlbum{
+    public String name();  // 专辑名
+    public String[] composers();  //作曲家们
+    double price(); //价格
+}
+
+@MyAlbum(name="B-DAY",composers = {"IKON","CAIXUNKUN"},price = 99.9)  // 注解类
+public class AnnotationDemo{
+    
+    @MyAlbum(name="B-DAY",composers = {"IKON","CAIXUNKUN"},price = 99.9) //注解构造器
+    public AnnotationDemo(){}
+    
+    ······
+}
+
+```
+
+​	value() 为注解的特别属性，只有一项无默认值属性时，使用注解时可以省略value ` @MyAlbum("/delete")`
+
+#### 4.2 元注解
+
+​	元注解: 用于注解 注解的 注解。 用于定义自定义注解的位置
+
+​	**@Target**： 约束自定义注解的使用场景
+
+​	**@Retention** ：申明注解的生命周期
+
+​	比如Junit框架中的@Test注解的元注解：
+
+``` java
+@Retention(RetentionPolicy.RUNTIME)	
+@Target({ElementType.METHOD})	
+public @interface Test {
+    ···
+}
+```
+
+​	元注解参数：	<img src="C:\Users\osaxe\AppData\Roaming\Typora\typora-user-images\image-20230402165219488.png" alt="image-20230402165219488" style="zoom:50%;" />
+
+#### 4.3 注解解析
+
+​	也即判断是否存在注解，存在则解析出内容
+
+​	Annotation接口 ： 注解的顶级接口，所有注解都是它的实现类
+
+​	AnnotatedElement接口 : 定义了与注解解析的相关方法
+
+​	所有的类成分都实现了AnnotatedElement接口，他们都有解析注解的能力。
+
+| Annotation[]  getDeclaredAnnotations()                       | 获得当前对象上使用的所有注解，返回注解数组。 |
+| ------------------------------------------------------------ | -------------------------------------------- |
+| T getDeclaredAnnotation(Class<T> annotationClass)            | 根据注解类型获得对应注解对象                 |
+| boolean isAnnotationPresent(Class<Annotation> annotationClass) | 判断当前对象是否使用了指定的注解             |
+
+​	注解解析的技巧：注解在哪个成分，则先拿哪个成分，再拿其上的注解。
+
+```java
+public void parseClass() {
+        Class c = BookStore.class; // 获得类对象
+        if (c.isAnnotationPresent(Book.class)) { // 判断该类是否存在这个注解
+            Book book = (Book) c.getDeclaredAnnotation(Book.class);  //获取该注解对象,注意！不要使用多态，不便于获取内容
+            System.out.println(book.value());
+            System.out.println(book.price());
+            System.out.println(Arrays.toString(book.authors()));
+        }
+    }
+```
+
+​	部分实现Junit框架：
+
+​	获得类对象，提取全部方法，遍历并判断方法是否存在@MyTest注解，存在则执行方法	
 
 ### 5 动态代理(设计模式之一)
+
+​	代理类：java.lang.reflect.Proxy
+
+​	见代码，暂略
+
+<img src="https://scm-imagehost-public-1301181944.cos.ap-chengdu.myqcloud.com/img/image-20230402200849385.png" alt="image-20230402200849385" style="zoom:67%;" />
 
 
 
 ### 6 XML
+
+​	可扩展标记语言XML - eXtensible Markup Language
+
+#### 6.1 XML语法
+
+​	后缀名必须为 .xml
+
+​	第一档必须为文档声明： ` <?xml version="1.0" encoding="UTF-8" ?>`
+
+##### 6.1.1 标签(元素)规则：
+
+- 标签由一对尖括号和合法标识符组成: ` <name> </name>` ，必须存在一个根标签(内容随意)，有且只能有一个。
+- 标签必须成对出现，有开始，有结束: ` <name> </name>`
+- 特殊的标签可以不成对，但是必须有结束标记，如 ` <br/>`
+- 标签中可以定义属性，属性和标签名空格隔开,属性值必须用引号引起来 ` <name id = “1"> </name>` 
+
+##### 6.1.2 其他组成内容
+
+- 可以定义注释信息  ` <!- 注释内容 -->`  (Mono字体连号了)
+
+- 可以使用 转义字体来表示特殊符号  
+
+  > &lt; -> < 
+  >
+  > &gt; -> ＞
+  >
+  > &amp; -> &
+  >
+  > &apos; -> ’
+  >
+  > &quot; -> “
+  >
+  > 本段引用建议查看源码...md文档也同样支持，所以显示一样了
+
+- 可以使用CDATA区 （字符数据区）` <![  CDATA[ ]   ]>`
+
+##### 6.1.3 XML文档约束 DTD / schema
+
+​	文档约束：限定标签和属性的书写方法的规范
+
+​	DTD文档约束：
+
+​		规范文件后缀必须是 .dtd，使用时在xml文档中导入该dtd文档即可。 ` <!DOCTYPE ···>`
+
+​	schema文档约束：
+
+​		相比DTD，可以约束文档的数据类型，规范文件本身也是一个xml文档，可以被其他文档约束。
+
+​		schema的文档后缀必须是 .xsd (xml schema definition) ，使用时导入即可
+
+#### 6.2 XML解析 -Dom4J
+
+​	SAX和DOM是两种官方提供的解析方式。
+
+基于DOM的技术框架Dom4J:<img src="https://scm-imagehost-public-1301181944.cos.ap-chengdu.myqcloud.com/img/image-20230403152536040.png" alt="image-20230403152536040" style="zoom:50%;" />
+
+使用Dom4J解析XML文件：
+
+ 1. 创建一个Dom4J的解析器对象： ` SAXReader saxReader = new SAXReader();`
+
+ 2. 加载XML文件，获得其Document对象 ` Document document = saxReader.read(new FileInputStream("pathname\\src\\doc.xml"));`
+
+    实际开发常用的写法 ` InputStream is = Dom4JDemo.class.gerResourceAsStream("/doc.xml");` 
+
+    `Document document = saxReader.read(is);`
+
+    该法会直接定位于src目录下寻找，不受模块名更改的影响。
+
+ 3. 获取根元素对象： ` Element root = document.getRootElement();`
+
+ 4. 获得子元素：<img src="https://scm-imagehost-public-1301181944.cos.ap-chengdu.myqcloud.com/img/image-20230403154859122.png" alt="image-20230403154859122" style="zoom:50%;" />
+
+#### 6.3 XML检索——Xpath
+
+​	如果只是需要检索某一项信息，无需先解析整个XML文档，使用Xpath。
+
+​	Xpath是基于Dom4J设计的，还需要一个jaxen.jar
+
+​	检索方法：
+
+  1. 创建一个Dom4J解析器对象，然后获取Document对象
+
+  2. 查询节点：
+
+     > 绝对路径查找：
+     >
+     > ​	` List<Node> nameNodes = document.selectNodes("/contactList/contact/name");` 
+     >
+     > ​	这样就获取了所有该路径的子元素节点对象数组；
+     >
+     > 相对路径查找：    ./子元素/
+     >
+     > ​	` Element root = document.getRootElement();  root.selectNodes("./contact/name");`
+     >
+     > 全文检索：
+     >
+     > ​	//元素   在全文找该元素   ` document.selectNodes("//name");`
+     >
+     > ​	//元素1/元素2  在全文找元素1的下一级子元素的元素2  
+     >
+     > ​	//元素1//元素2  在全文找元素1的所有级子元素的元素2
+     >
+     > 属性查找：
+     >
+     > ​	//@属性名称   在全文检索属性对象 ` List<Node> nameNodes = document.selectNodes("@id");`
+     >
+     > ​	//元素[@属性名称]  在全文检索包含该属性的元素
+     >
+     > ​	//元素[@属性名称 = 值]  在全文检索包含该属性且值符合的元素
+     >
+     > 以上方法都可以换为 selectSingleNode ，只获得检索到的第一个
+
+### 7 补充设计模式
+
+#### 工厂模式
+
+​	例如在线程池中，就是用工厂来创建的，而不是使用new的方式进行创建。
+
+​	工厂模式提供了一种获取对象的方式。
+
+​	解耦合！将创建对象的过程独立出来，便于维护。
+
+#### 装饰模式
+
+​	创建一个新类，包装原始类，从而在新类中提升原来类的功能。
+
+​	不更改原类的基础，动态地扩展一个类的功能。例如动态代理
+
+​	例如：<img src="https://scm-imagehost-public-1301181944.cos.ap-chengdu.myqcloud.com/img/image-20230403175032316.png" alt="image-20230403175032316" style="zoom:50%;" />
+
+​	

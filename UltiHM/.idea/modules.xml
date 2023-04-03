@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/AnnotationDemo/AnnotationDemo.iml" filepath="$PROJECT_DIR$/AnnotationDemo/AnnotationDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/ArrLtExTENDs/ArrLtExTENDs.iml" filepath="$PROJECT_DIR$/ArrLtExTENDs/ArrLtExTENDs.iml" />
       <module fileurl="file://$PROJECT_DIR$/DOUDIZHU/DOUDIZHU.iml" filepath="$PROJECT_DIR$/DOUDIZHU/DOUDIZHU.iml" />
       <module fileurl="file://$PROJECT_DIR$/FileClassDemo/FileClassDemo.iml" filepath="$PROJECT_DIR$/FileClassDemo/FileClassDemo.iml" />
@@ -14,6 +15,9 @@
       <module fileurl="file://$PROJECT_DIR$/Thread/Thread.iml" filepath="$PROJECT_DIR$/Thread/Thread.iml" />
       <module fileurl="file://$PROJECT_DIR$/Time/Time.iml" filepath="$PROJECT_DIR$/Time/Time.iml" />
       <module fileurl="file://$PROJECT_DIR$/UltiHM.iml" filepath="$PROJECT_DIR$/UltiHM.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pattern/pattern.iml" filepath="$PROJECT_DIR$/pattern/pattern.iml" />
+      <module fileurl="file://$PROJECT_DIR$/proxy/proxy.iml" filepath="$PROJECT_DIR$/proxy/proxy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xml/xml.iml" filepath="$PROJECT_DIR$/xml/xml.iml" />
     </modules>
   </component>
 </project>
